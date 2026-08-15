@@ -6,25 +6,26 @@ app = Flask(__name__)
 def hello():
     return '''
     <!DOCTYPE html>
-    <html lang="ja">
+    <html>
     <head>
-        <meta charset="UTF-8">
-        <title>初めてのアプリ</title>
-        <style>
-            body {
-                font-family: 'メイリオ', sans-serif;
-                text-align: center;
-                padding: 100px;
-                background-color: #f0f8ff;
-            }
-            h1 {
-                color: #4169e1;
-            }
-        </style>
+    <meta charset="UTF-8">
+    <title>vue_pager</title>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/diff2html/2.3.3/diff2html.min.css">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jsdiff/3.4.0/diff.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/diff2html/2.3.3/diff2html.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/diff2html/2.3.3/diff2html-ui.min.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const unifiedDiff = JsDiff.createPatch("fileName", "a\nb\nc\d\ne\n\nf", "a\nb\nac\d\ne\n\n\nf", "test", "test");
+        const diff2htmlUi = new Diff2HtmlUI({diff: unifiedDiff});
+        diff2htmlUi.draw('#app', {inputFormat: 'json', showFiles: true, matching: 'lines'});
+    });
+    </script>
     </head>
     <body>
-        <h1>🚀 Hello, World!</h1>
-        <p>初めてのアプリ公開成功！</p>
+    <div id="app">
+    </div>
     </body>
     </html>
     '''
