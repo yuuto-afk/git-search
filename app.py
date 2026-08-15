@@ -7,7 +7,8 @@ app = Flask(__name__)
 def index():
     # git diff を取得
     result = subprocess.run(
-        ["git", "diff", "HEAD~1", "HEAD"],  # 例: 1つ前のコミットとの差分
+        ["git clone https://github.com/yuuto-afk/git-search.git && cd git-search && git diff HEAD~1 HEAD"],  # 例: 1つ前のコミットとの差分
+        shell=True,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         text=True
