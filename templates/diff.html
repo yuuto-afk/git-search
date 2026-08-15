@@ -13,15 +13,12 @@
 <div id="diff"></div>
 
 <script>
-  const diffText = `{{ diff | safe }}`;
-
-  // diff2html で HTML に変換
+  const diffText = {{ diff | tojson }};
   const diffHtml = Diff2Html.html(diffText, {
     drawFileList: true,
     matching: "lines",
-    outputFormat: "line-by-line"  // "side-by-side" にすると左右比較
+    outputFormat: "line-by-line"
   });
-
   document.getElementById("diff").innerHTML = diffHtml;
 </script>
 
