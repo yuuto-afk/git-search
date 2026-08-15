@@ -1,12 +1,21 @@
+import subprocess
 from flask import Flask, render_template
 
 app = Flask(__name__)
 
 @app.route("/")
 def index():
-    old = 'console.log("Hello");'
-    new = 'console.log("Hello World");'
-    return render_template("diff.html", old=old, new=new)
+    # git diff を取得
+    result = subprocess.run(
+        ["git", "diff", "HEAD~1", "HEAD"],  # 例: 1つ前のコミットとの差分
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True
+    )
+
+    diff_text = result.stdout
+
+    return render_template("diff.html", diff=diff_text)
 
 if __name__ == "__main__":
     app.run()

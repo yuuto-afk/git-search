@@ -9,19 +9,15 @@
 </head>
 <body>
 
-<h2>差分ビュー</h2>
+<h2>Git リポジトリの差分</h2>
 <div id="diff"></div>
 
 <script>
-  const oldText = `{{ old }}`;
-  const newText = `{{ new }}`;
-
-  // Unified diff を生成
-  const diff = Diff.createPatch("example.js", oldText, newText);
+  const diffText = `{{ diff | safe }}`;
 
   // diff2html で HTML に変換
-  const diffHtml = Diff2Html.html(diff, {
-    drawFileList: false,
+  const diffHtml = Diff2Html.html(diffText, {
+    drawFileList: true,
     matching: "lines",
     outputFormat: "line-by-line"  // "side-by-side" にすると左右比較
   });
