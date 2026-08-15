@@ -23,7 +23,7 @@ def hello():
         </style>
     </head>
     <body>
-        <h1>🎉 Hello, World!</h1>
+        <h1>🚀 Hello, World!</h1>
         <p>初めてのアプリ公開成功！</p>
     </body>
     </html>
