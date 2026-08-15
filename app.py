@@ -15,6 +15,8 @@ def index():
     )
 
     diff_text = result.stdout
+    print(diff_text)
+    print(result.stderr)
 
     return render_template("diff.html", diff=diff_text)
 
