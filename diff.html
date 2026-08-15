@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/diff2html/bundles/css/diff2html.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/diff@5.0.0/dist/diff.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/diff2html/bundles/js/diff2html.min.js"></script>
+</head>
+<body>
+
+<h2>差分ビュー</h2>
+<div id="diff"></div>
+
+<script>
+  const oldText = `{{ old }}`;
+  const newText = `{{ new }}`;
+
+  // Unified diff を生成
+  const diff = Diff.createPatch("example.js", oldText, newText);
+
+  // diff2html で HTML に変換
+  const diffHtml = Diff2Html.html(diff, {
+    drawFileList: false,
+    matching: "lines",
+    outputFormat: "line-by-line"  // "side-by-side" にすると左右比較
+  });
+
+  document.getElementById("diff").innerHTML = diffHtml;
+</script>
+
+</body>
+</html>
