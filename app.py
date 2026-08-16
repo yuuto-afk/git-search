@@ -107,14 +107,15 @@ def search():
             path, line_no, content = line.split(":", 2)
             line_no = int(line_no)
 
-            rel_path = path.replace("repo-dir" + "/", "")
+            rel_path = path.relpath(path, "repo-dir")
 
             if rel_path not in file_hits:
                 file_hits[rel_path] = []
 
             file_hits[rel_path].append({
                 "line": line_no,
-                "content": content
+                "content": content,
+                "abs_path": path
             })
         except:
             continue
@@ -123,14 +124,15 @@ def search():
 
     # ▼ ファイルごとに「まとまり（hunk）」を作る
     for rel_path, hits in file_hits.items():
-        full_path = os.path.join("repo-dir", rel_path)
+        abs_path = hits[0]["abs_path"]
         try:
             with open(full_path, "r", encoding="utf-8", errors="ignore") as f:
                 file_lines = f.readlines()
-        except:
+        except Exception as e:
+            print("FILE OPEN ERROR:", abs_path, e)
             continue
 
-        hunk = []
+        hunks = []
         current_hunk = None
 
         for hit in hits:
