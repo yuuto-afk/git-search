@@ -30,7 +30,7 @@ def clone_repo():
 
     # コミット一覧取得
     result = subprocess.run(
-        ["git", "-C", "repo-dir", "log", "--pretty=format:%H|%s"],
+        ["git", "-C", "repo-dir", "log", "--pretty=format:%H|%s|%cd", "--date=short"],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         text=True

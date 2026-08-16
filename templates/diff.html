@@ -36,7 +36,32 @@
     }
 
     #commitSelect { margin-top: 20px; display: none; }
-    select { padding: 4px 8px; width: 300px; }
+
+    .commit-option {
+      padding: 6px 8px;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .commit-hash {
+      font-weight: bold;
+      color: #2c3e50;
+    }
+
+    .commit-msg {
+      color: #555;
+    }
+
+    .commit-date {
+      color: #888;
+      font-size: 12px;
+    }
+
+    select {
+      padding: 6px;
+      width: 360px;
+      margin-bottom: 12px;
+    }
   </style>
 </head>
 <body>
@@ -59,10 +84,10 @@
 <div id="commitSelect">
   <h3>コミットを選択してください</h3>
 
-  <label>コミット A:</label><br>
+  <label>変更前コミット:</label><br>
   <select id="commitA"></select><br><br>
 
-  <label>コミット B:</label><br>
+  <label>変更後コミット:</label><br>
   <select id="commitB"></select><br><br>
 
   <button id="diffBtn">差分を表示</button>
@@ -106,12 +131,24 @@
     data.commits.forEach(c => {
       const optA = document.createElement("option");
       optA.value = c.hash;
-      optA.textContent = `${c.hash} - ${c.message}`;
+      optA.innerHTML = `
+        <span class="commit-option">
+          <span class="commit-hash">${c.hash.slice(0,7)}</span>
+          <span class="commit-msg"> — ${c.message}</span><br>
+          <span class="commit-date">${c.date}</span>
+        </span>
+      `;
       commitA.appendChild(optA);
 
       const optB = document.createElement("option");
       optB.value = c.hash;
-      optB.textContent = `${c.hash} - ${c.message}`;
+      optB.innerHTML = `
+        <span class="commit-option">
+          <span class="commit-hash">${c.hash.slice(0,7)}</span>
+          <span class="commit-msg"> — ${c.message}</span><br>
+          <span class="commit-date">${c.date}</span>
+        </span>
+      `;
       commitB.appendChild(optB);
     });
 
