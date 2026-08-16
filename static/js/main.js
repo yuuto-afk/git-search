@@ -1,3 +1,12 @@
+const renderDiff = (text) => {
+  const diffHtml = Diff2Html.html(text, {
+    drawFileList: true,
+    matching: "lines",
+    outputFormat: "line-by-line"
+  });
+  document.getElementById("diff").innerHTML = diffHtml;
+};
+
 // clone → ブランチ一覧取得
 document.getElementById("loadBtn").addEventListener("click", async () => {
   const url = document.getElementById("repoUrl").value;
