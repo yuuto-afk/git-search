@@ -103,6 +103,7 @@ document.getElementById("diffBtn").addEventListener("click", async () => {
 let searchResults = [];
 let currentPage = 1;
 const perPage = 20;   // 1ページあたりの件数
+let currentKeyword = "";
 
 function highlight(text, keyword) {
   const safeKeyword = keyword.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // 正規表現エスケープ
@@ -154,12 +155,12 @@ ${contextHtml}
 
 // ▼ 検索ボタン
 document.getElementById("searchBtn").addEventListener("click", async () => {
-  const keyword = document.getElementById("searchKeyword").value;
+  currentKeyword = document.getElementById("searchKeyword").value;
 
   const res = await fetch("/search", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ keyword })
+    body: JSON.stringify({ keyword: currentKeyword })
   });
 
   const data = await res.json();
