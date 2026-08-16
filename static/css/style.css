@@ -128,3 +128,35 @@ select {
   font-size: 12px;
 }
 
+/* 検索モードの検索ボックス */
+#searchMode .search-container {
+  margin-top: 10px;
+}
+
+#searchKeyword {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  padding: 6px;
+}
+
+#searchBtn {
+  background: #34a853;
+  color: white;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-left: 10px;
+}
+
+#searchBtn:hover {
+  background: #2c8e46;
+}
+
+#searchResults {
+  font-size: 15px;
+}
+

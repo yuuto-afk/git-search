@@ -81,3 +81,32 @@ def diff():
 
     return jsonify({"diff": diff_text})
 
+@app.route("/search", methods=["POST"])
+def search():
+    data = request.get_json()
+    keyword = data["keyword"]
+
+    # grep -R で全文検索
+    result = subprocess.run(
+        ["grep", "-R", "-n", keyword, "repo-dir"],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True
+    )
+
+    lines = result.stdout.splitlines()
+
+    results = []
+    for line in lines:
+        # 例: git-search/path/to/file.py:23: print("hello")
+        try:
+            path, line_no, content = line.split(":", 2)
+            results.append({
+                "path": path.replace(TARGET_DIR + "/", ""),
+                "line": line_no,
+                "content": content
+            })
+        except:
+            continue
+
+    return jsonify({"results": results})
