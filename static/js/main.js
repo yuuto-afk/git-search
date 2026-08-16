@@ -100,7 +100,41 @@ document.getElementById("diffBtn").addEventListener("click", async () => {
   renderDiff(data.diff);
 });
 
-// ▼ ソースコード検索（仮実装）
+let searchResults = [];
+let currentPage = 1;
+const perPage = 20;   // 1ページあたりの件数
+
+// ▼ ページを描画する関数
+function renderSearchPage() {
+  const resultsDiv = document.getElementById("searchResults");
+  resultsDiv.innerHTML = "";
+
+  const start = (currentPage - 1) * perPage;
+  const end = start + perPage;
+
+  const pageItems = searchResults.slice(start, end);
+
+  pageItems.forEach(r => {
+    const item = document.createElement("div");
+    item.style.marginBottom = "10px";
+    item.innerHTML = `
+      <div><strong>${r.path}</strong> : ${r.line}</div>
+      <div style="color:#555;">${r.content}</div>
+    `;
+    resultsDiv.appendChild(item);
+  });
+
+  // ページ情報更新
+  const totalPages = Math.ceil(searchResults.length / perPage);
+  document.getElementById("pageInfo").textContent =
+    `${currentPage} / ${totalPages}`;
+
+  // ページネーション表示
+  document.getElementById("pagination").style.display =
+    searchResults.length > perPage ? "block" : "none";
+}
+
+// ▼ 検索ボタン
 document.getElementById("searchBtn").addEventListener("click", async () => {
   const keyword = document.getElementById("searchKeyword").value;
 
@@ -111,24 +145,34 @@ document.getElementById("searchBtn").addEventListener("click", async () => {
   });
 
   const data = await res.json();
+  searchResults = data.results;
+  currentPage = 1;
 
-  const resultsDiv = document.getElementById("searchResults");
-  resultsDiv.innerHTML = "";
-
-  if (data.results.length === 0) {
-    resultsDiv.innerHTML = "<p>検索結果はありません。</p>";
+  if (searchResults.length === 0) {
+    document.getElementById("searchResults").innerHTML =
+      "<p>検索結果はありません。</p>";
+    document.getElementById("pagination").style.display = "none";
     return;
   }
 
-  data.results.forEach(r => {
-    const item = document.createElement("div");
-    item.style.marginBottom = "10px";
-    item.innerHTML = `
-      <div><strong>${r.path}</strong> : ${r.line}</div>
-      <div style="color:#555;">${r.content}</div>
-    `;
-    resultsDiv.appendChild(item);
-  });
+  renderSearchPage();
+});
+
+// ▼ 前へ
+document.getElementById("prevPage").addEventListener("click", () => {
+  if (currentPage > 1) {
+    currentPage--;
+    renderSearchPage();
+  }
+});
+
+// ▼ 次へ
+document.getElementById("nextPage").addEventListener("click", () => {
+  const totalPages = Math.ceil(searchResults.length / perPage);
+  if (currentPage < totalPages) {
+    currentPage++;
+    renderSearchPage();
+  }
 });
 
 // ▼ モード選択 → diffMode or searchMode を表示
@@ -149,3 +193,4 @@ document.getElementById("mode").addEventListener("change", () => {
     document.getElementById("searchMode").style.display = "block";
   }
 });
+
