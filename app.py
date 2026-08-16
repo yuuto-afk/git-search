@@ -30,7 +30,7 @@ def clone_repo():
 
     # ブランチ一覧取得
     branches_raw = subprocess.run(
-        ["git", "-C", TARGET_DIR, "branch", "-a"],
+        ["git", "-C", "repo-dir", "branch", "-a"],
         stdout=subprocess.PIPE,
         text=True
     ).stdout.splitlines()
