@@ -1,0 +1,130 @@
+body {
+  font-family: sans-serif;
+  margin: 20px;
+}
+
+/* Google風検索ボックス */
+.search-container {
+  display: flex;
+  align-items: center;
+  width: 480px;
+  background: #fff;
+  border-radius: 24px;
+  padding: 8px 16px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  transition: box-shadow 0.2s ease;
+}
+
+.search-container:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.20);
+}
+
+.search-container:focus-within {
+  box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+}
+
+.search-icon {
+  font-size: 20px;
+  margin-right: 10px;
+  color: #666;
+}
+
+#repoUrl {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  padding: 6px;
+}
+
+#loadBtn {
+  background: #4285f4;
+  color: white;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-left: 10px;
+}
+
+#loadBtn:hover {
+  background: #357ae8;
+}
+
+#urlBox {
+  margin-bottom: 20px;
+}
+
+/* ロード中 UI */
+#loading {
+  display: none;
+  margin-top: 20px;
+  font-size: 18px;
+  color: #444;
+}
+
+.spinner {
+  border: 4px solid #eee;
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  animation: spin 1s linear infinite;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 10px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* モード選択 */
+#modeSelect {
+  margin-top: 20px;
+  display: none;
+}
+
+#modeSelect select {
+  padding: 6px 10px;
+  font-size: 16px;
+}
+
+/* 差分モード */
+#diffMode {
+  display: none;
+}
+
+#commitSelect {
+  margin-top: 20px;
+  display: none;
+}
+
+select {
+  padding: 6px;
+  width: 360px;
+  margin-bottom: 12px;
+}
+
+.commit-option {
+  padding: 6px 8px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.commit-hash {
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+.commit-msg {
+  color: #555;
+}
+
+.commit-date {
+  color: #888;
+  font-size: 12px;
+}
+

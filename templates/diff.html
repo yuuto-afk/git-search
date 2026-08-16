@@ -4,110 +4,20 @@
   <meta charset="utf-8">
   <title>GitHub Viewer</title>
 
+  <!-- diff2html -->
   <link rel="stylesheet"
         href="https://cdn.jsdelivr.net/npm/diff2html/bundles/css/diff2html.min.css" />
   <script src="https://cdn.jsdelivr.net/npm/diff@5.0.0/dist/diff.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/diff2html/bundles/js/diff2html.min.js"></script>
 
-  <style>
-    body { font-family: sans-serif; margin: 20px; }
-
-    /* Google風検索ボックス */
-    .search-container {
-      display: flex;
-      align-items: center;
-      width: 480px;
-      background: #fff;
-      border-radius: 24px;
-      padding: 8px 16px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-      transition: box-shadow 0.2s ease;
-    }
-
-    .search-container:hover {
-      box-shadow: 0 4px 12px rgba(0,0,0,0.20);
-    }
-
-    .search-container:focus-within {
-      box-shadow: 0 4px 14px rgba(0,0,0,0.25);
-    }
-
-    .search-icon {
-      font-size: 20px;
-      margin-right: 10px;
-      color: #666;
-    }
-
-    #repoUrl {
-      flex: 1;
-      border: none;
-      outline: none;
-      font-size: 16px;
-      padding: 6px;
-    }
-
-    #loadBtn {
-      background: #4285f4;
-      color: white;
-      border: none;
-      padding: 6px 14px;
-      border-radius: 20px;
-      cursor: pointer;
-      font-size: 14px;
-      margin-left: 10px;
-    }
-
-    #loadBtn:hover {
-      background: #357ae8;
-    }
-
-    #urlBox {
-      margin-bottom: 20px;
-    }
-
-    /* モード選択 */
-    #modeSelect { margin-top: 20px; display: none; }
-    #modeSelect select { padding: 6px 10px; font-size: 16px; }
-
-    /* ロード中 UI */
-    #loading {
-      display: none;
-      margin-top: 20px;
-      font-size: 18px;
-      color: #444;
-    }
-    .spinner {
-      border: 4px solid #eee;
-      border-top: 4px solid #3498db;
-      border-radius: 50%;
-      width: 32px;
-      height: 32px;
-      animation: spin 1s linear infinite;
-      display: inline-block;
-      vertical-align: middle;
-      margin-right: 10px;
-    }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    /* 差分モード */
-    #diffMode { display: none; }
-    #commitSelect { margin-top: 20px; display: none; }
-    select { padding: 6px; width: 360px; margin-bottom: 12px; }
-
-    .commit-option { padding: 6px 8px; font-size: 14px; line-height: 1.4; }
-    .commit-hash { font-weight: bold; color: #2c3e50; }
-    .commit-msg { color: #555; }
-    .commit-date { color: #888; font-size: 12px; }
-  </style>
+  <!-- 外部CSS -->
+  <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
 
 <h2>GitHub Viewer</h2>
 
-<!-- GitHub URL 入力欄（Google検索風） -->
+<!-- GitHub URL 入力欄（Google風） -->
 <div id="urlBox">
   <div class="search-container">
     <span class="search-icon">🔍</span>
@@ -122,7 +32,7 @@
   リポジトリを clone しています…
 </div>
 
-<!-- clone 後に表示されるモード選択 -->
+<!-- モード選択（clone 後に表示） -->
 <div id="modeSelect">
   <h3>モード選択</h3>
   <select id="mode">
@@ -151,95 +61,8 @@
   <div id="diff"></div>
 </div>
 
-<script>
-  const renderDiff = (text) => {
-    const diffHtml = Diff2Html.html(text, {
-      drawFileList: true,
-      matching: "lines",
-      outputFormat: "line-by-line"
-    });
-    document.getElementById("diff").innerHTML = diffHtml;
-  };
-
-  // clone → コミット一覧取得
-  document.getElementById("loadBtn").addEventListener("click", async () => {
-    const url = document.getElementById("repoUrl").value;
-
-    document.getElementById("loading").style.display = "block";
-    document.getElementById("diff").innerHTML = "";
-    document.getElementById("commitSelect").style.display = "none";
-    document.getElementById("modeSelect").style.display = "none";
-
-    const res = await fetch("/clone", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ url })
-    });
-
-    const data = await res.json();
-    document.getElementById("loading").style.display = "none";
-
-    // clone 完了後にモード選択を表示
-    document.getElementById("modeSelect").style.display = "block";
-
-    // コミット一覧を select に追加（差分モード用）
-    const commitA = document.getElementById("commitA");
-    const commitB = document.getElementById("commitB");
-    commitA.innerHTML = "";
-    commitB.innerHTML = "";
-
-    data.commits.forEach(c => {
-      const optA = document.createElement("option");
-      optA.value = c.hash;
-      optA.innerHTML = `
-        <span class="commit-option">
-          <span class="commit-hash">${c.hash.slice(0,7)}</span>
-          <span class="commit-msg"> — ${c.message}</span><br>
-          <span class="commit-date">${c.date}</span>
-        </span>
-      `;
-      commitA.appendChild(optA);
-
-      const optB = document.createElement("option");
-      optB.value = c.hash;
-      optB.innerHTML = `
-        <span class="commit-option">
-          <span class="commit-hash">${c.hash.slice(0,7)}</span>
-          <span class="commit-msg"> — ${c.message}</span><br>
-          <span class="commit-date">${c.date}</span>
-        </span>
-      `;
-      commitB.appendChild(optB);
-    });
-  });
-
-  // モード切り替え
-  document.getElementById("mode").addEventListener("change", () => {
-    const mode = document.getElementById("mode").value;
-
-    document.getElementById("diffMode").style.display = "none";
-
-    if (mode === "diff") {
-      document.getElementById("diffMode").style.display = "block";
-      document.getElementById("commitSelect").style.display = "block";
-    }
-  });
-
-  // 差分表示
-  document.getElementById("diffBtn").addEventListener("click", async () => {
-    const a = document.getElementById("commitA").value;
-    const b = document.getElementById("commitB").value;
-
-    const res = await fetch("/diff", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ a, b })
-    });
-
-    const data = await res.json();
-    renderDiff(data.diff);
-  });
-</script>
+<!-- 外部JS -->
+<script src="/static/js/main.js"></script>
 
 </body>
 </html>
