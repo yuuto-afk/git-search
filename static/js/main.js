@@ -104,6 +104,12 @@ let searchResults = [];
 let currentPage = 1;
 const perPage = 20;   // 1ページあたりの件数
 
+function highlight(text, keyword) {
+  const safeKeyword = keyword.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // 正規表現エスケープ
+  const regex = new RegExp(safeKeyword, "gi");
+  return text.replace(regex, match => `<mark>${match}</mark>`);
+}
+
 // ▼ ページを描画する関数
 function renderSearchPage() {
   const resultsDiv = document.getElementById("searchResults");
@@ -121,13 +127,14 @@ function renderSearchPage() {
     const contextHtml = r.context
       .map((line, i) => {
         const lineNumber = r.context_start + i;
-        return `<span style="color:#888;">${lineNumber}</span>  ${line}`;
+        const highlighted = highlight(line, currentKeyword);
+        return `<span style="color:#888;">${lineNumber}</span>  ${highlighted}`;
       })
       .join("\n");
 
     item.innerHTML = `
       <div><strong>${r.path}</strong> : ${r.line}</div>
-      <pre style="background:#f6f8fa; padding:10px; border-radius:6px;">
+      <pre style="background:#f6f8fa; padding:10px; border-radius:6px; white-space:pre-wrap;">
 ${contextHtml}
       </pre>
     `;
