@@ -28,6 +28,25 @@ def clone_repo():
     print(result.stdout)
     print(result.stderr)
 
+    # ブランチ一覧取得
+    branches_raw = subprocess.run(
+        ["git", "-C", TARGET_DIR, "branch", "-a"],
+        stdout=subprocess.PIPE,
+        text=True
+    ).stdout.splitlines()
+
+    branches = [b.replace("* ", "").strip() for b in branches_raw]
+
+    return jsonify({"branches": branches})
+
+@app.route("/commits", methods=["POST"])
+def commits():
+    data = request.get_json()
+    branch = data["branch"]
+
+    # ブランチ切り替え
+    subprocess.run(["git", "-C", "repo-dir", "checkout", branch])
+
     # コミット一覧取得
     result = subprocess.run(
         ["git", "-C", "repo-dir", "log", "--pretty=format:%H|%s|%cd", "--date=short"],

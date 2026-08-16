@@ -46,13 +46,20 @@
 <div id="diffMode">
   <h3>コミットの差分を見るモード</h3>
 
-  <div id="commitSelect">
+  <!-- ▼ 新しく追加：ブランチ選択欄 -->
+  <div id="branchSelect" style="display:none; margin-top:20px;">
+    <h3>ブランチを選択してください</h3>
+    <select id="branchList"></select>
+  </div>
+
+  <!-- ▼ コミット選択欄（ブランチ選択後に表示） -->
+  <div id="commitSelect" style="display:none; margin-top:20px;">
     <h3>コミットを選択してください</h3>
 
-    <label>コミット A:</label><br>
+    <label>変更前コミット:</label><br>
     <select id="commitA"></select><br>
 
-    <label>コミット B:</label><br>
+    <label>変更後コミット:</label><br>
     <select id="commitB"></select><br>
 
     <button id="diffBtn">差分を表示</button>
