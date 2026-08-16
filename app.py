@@ -9,8 +9,8 @@ app = Flask(__name__)
 def index():
     return render_template("diff.html")
 
-@app.route("/diff", methods=["POST"])
-def diff():
+@app.route("/clone", methods=["POST"])
+def clone_repo():
     data = request.get_json()
     repo_url = data["url"]
 
@@ -19,13 +19,31 @@ def diff():
         shutil.rmtree("repo-dir")
 
     result = subprocess.run(
-        ["GIT_LFS_SKIP_SMUDGE=1 git clone {repo_url} repo-dir && cd repo-dir && git diff HEAD~1 HEAD".format(repo_url=repo_url)],  # 例: 1つ前のコミットとの差分
+        ["GIT_LFS_SKIP_SMUDGE=1 git clone {repo_url} repo-dir".format(repo_url=repo_url)],  # 例: 1つ前のコミットとの差分
         shell=True,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         text=True
     )
 
+    commits = []
+    for line in result.stdout.splitlines():
+        hash, msg = line.split("|", 1)
+        commits.append({"hash": hash, "message": msg})
+
+    return jsonify({"commits": commits})
+
+@app.route("/diff", methods=["POST"])
+def diff():
+    data = request.get_json()
+    a = data["a"]
+    b = data["b"]
+
+    result = subprocess.run(
+        ["git", "-C", "repo-dir", "diff", a, b],
+        stdout=subprocess.PIPE,
+        text=True
+    )
     diff_text = result.stdout
     print(diff_text)
     print(result.stderr)

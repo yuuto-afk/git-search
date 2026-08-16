@@ -13,14 +13,12 @@
     #repoUrl { width: 360px; padding: 4px 8px; }
     #loadBtn { padding: 4px 10px; }
 
-    /* ロード中 UI */
     #loading {
       display: none;
       margin-top: 20px;
       font-size: 18px;
       color: #444;
     }
-
     .spinner {
       border: 4px solid #eee;
       border-top: 4px solid #3498db;
@@ -32,11 +30,13 @@
       vertical-align: middle;
       margin-right: 10px;
     }
-
     @keyframes spin {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
+
+    #commitSelect { margin-top: 20px; display: none; }
+    select { padding: 4px 8px; width: 300px; }
   </style>
 </head>
 <body>
@@ -55,6 +55,19 @@
   リポジトリを clone しています…
 </div>
 
+<!-- コミット選択 UI -->
+<div id="commitSelect">
+  <h3>コミットを選択してください</h3>
+
+  <label>コミット A:</label><br>
+  <select id="commitA"></select><br><br>
+
+  <label>コミット B:</label><br>
+  <select id="commitB"></select><br><br>
+
+  <button id="diffBtn">差分を表示</button>
+</div>
+
 <div id="diff"></div>
 
 <script>
@@ -67,24 +80,56 @@
     document.getElementById("diff").innerHTML = diffHtml;
   };
 
+  // clone → コミット一覧取得
   document.getElementById("loadBtn").addEventListener("click", async () => {
     const url = document.getElementById("repoUrl").value;
 
-    // ロード中 UI を表示
     document.getElementById("loading").style.display = "block";
     document.getElementById("diff").innerHTML = "";
+    document.getElementById("commitSelect").style.display = "none";
 
-    const res = await fetch("/diff", {
+    const res = await fetch("/clone", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ url })
     });
 
     const data = await res.json();
-
-    // ロード中 UI を非表示
     document.getElementById("loading").style.display = "none";
 
+    // コミット一覧を select に追加
+    const commitA = document.getElementById("commitA");
+    const commitB = document.getElementById("commitB");
+    commitA.innerHTML = "";
+    commitB.innerHTML = "";
+
+    data.commits.forEach(c => {
+      const optA = document.createElement("option");
+      optA.value = c.hash;
+      optA.textContent = `${c.hash} - ${c.message}`;
+      commitA.appendChild(optA);
+
+      const optB = document.createElement("option");
+      optB.value = c.hash;
+      optB.textContent = `${c.hash} - ${c.message}`;
+      commitB.appendChild(optB);
+    });
+
+    document.getElementById("commitSelect").style.display = "block";
+  });
+
+  // 差分表示
+  document.getElementById("diffBtn").addEventListener("click", async () => {
+    const a = document.getElementById("commitA").value;
+    const b = document.getElementById("commitB").value;
+
+    const res = await fetch("/diff", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ a, b })
+    });
+
+    const data = await res.json();
     renderDiff(data.diff);
   });
 </script>
