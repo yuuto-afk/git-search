@@ -104,7 +104,7 @@ def search():
         try:
             path, line_no, content = line.split(":", 2)
             results.append({
-                "path": path.replace(TARGET_DIR + "/", ""),
+                "path": path.replace("repo-dir" + "/", ""),
                 "line": line_no,
                 "content": content
             })
