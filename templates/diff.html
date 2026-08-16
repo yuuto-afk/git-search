@@ -6,20 +6,48 @@
         href="https://cdn.jsdelivr.net/npm/diff2html/bundles/css/diff2html.min.css" />
   <script src="https://cdn.jsdelivr.net/npm/diff@5.0.0/dist/diff.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/diff2html/bundles/js/diff2html.min.js"></script>
+
+  <style>
+    body { font-family: sans-serif; margin: 20px; }
+    #controls { margin-bottom: 16px; }
+    #repoUrl { width: 360px; padding: 4px 8px; }
+    #loadBtn { padding: 4px 10px; }
+  </style>
 </head>
 <body>
 
 <h2>Git リポジトリの差分</h2>
+
+<div id="controls">
+  <label for="repoUrl">GitHub URL:</label>
+  <input id="repoUrl" type="text" placeholder="https://github.com/user/repo">
+  <button id="loadBtn">差分を表示</button>
+</div>
+
 <div id="diff"></div>
 
 <script>
-  const diffText = {{ diff | tojson }};
-  const diffHtml = Diff2Html.html(diffText, {
-    drawFileList: true,
-    matching: "lines",
-    outputFormat: "line-by-line"
+  const renderDiff = (text) => {
+    const diffHtml = Diff2Html.html(text, {
+      drawFileList: true,
+      matching: "lines",
+      outputFormat: "line-by-line"
+    });
+    document.getElementById("diff").innerHTML = diffHtml;
+  };
+
+  document.getElementById("loadBtn").addEventListener("click", async () => {
+    const url = document.getElementById("repoUrl").value;
+
+    const res = await fetch("/diff", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ url })
+    });
+
+    const data = await res.json();
+    renderDiff(data.diff);
   });
-  document.getElementById("diff").innerHTML = diffHtml;
 </script>
 
 </body>
