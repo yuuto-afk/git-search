@@ -13,9 +13,9 @@ document.getElementById("loadBtn").addEventListener("click", async () => {
 
   document.getElementById("loading").style.display = "block";
   document.getElementById("diff").innerHTML = "";
-  document.getElementById("commitSelect").style.display = "none";
   document.getElementById("branchSelect").style.display = "none";
   document.getElementById("modeSelect").style.display = "none";
+  document.getElementById("commitSelect").style.display = "none";
 
   const res = await fetch("/clone", {
     method: "POST",
@@ -26,11 +26,17 @@ document.getElementById("loadBtn").addEventListener("click", async () => {
   const data = await res.json();
   document.getElementById("loading").style.display = "none";
 
-  // clone 完了後にモード選択を表示
-  document.getElementById("modeSelect").style.display = "block";
+  // ▼ clone 完了後にまずブランチ選択を表示
+  const branchList = document.getElementById("branchList");
+  branchList.innerHTML = "";
+  data.branches.forEach(b => {
+    const opt = document.createElement("option");
+    opt.value = b;
+    opt.textContent = b;
+    branchList.appendChild(opt);
+  });
 
-  // ブランチ一覧を保存（後で使う）
-  window.branches = data.branches;
+  document.getElementById("branchSelect").style.display = "block";
 });
 
 // モード切り替え
@@ -41,18 +47,7 @@ document.getElementById("mode").addEventListener("change", () => {
 
   if (mode === "diff") {
     document.getElementById("diffMode").style.display = "block";
-
-    // ▼ ブランチ一覧を表示
-    const branchList = document.getElementById("branchList");
-    branchList.innerHTML = "";
-    window.branches.forEach(b => {
-      const opt = document.createElement("option");
-      opt.value = b;
-      opt.textContent = b;
-      branchList.appendChild(opt);
-    });
-
-    document.getElementById("branchSelect").style.display = "block";
+    document.getElementById("commitSelect").style.display = "block";
   }
 });
 
@@ -85,7 +80,7 @@ document.getElementById("branchList").addEventListener("change", async () => {
     commitB.appendChild(optB);
   });
 
-  document.getElementById("commitSelect").style.display = "block";
+  document.getElementById("modeSelect").style.display = "block";
 });
 
 // ▼ 差分表示
