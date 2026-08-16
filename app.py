@@ -14,17 +14,29 @@ def clone_repo():
     data = request.get_json()
     repo_url = data["url"]
 
-    # git diff を取得
     if os.path.exists("repo-dir"):
         shutil.rmtree("repo-dir")
 
+    # clone
     result = subprocess.run(
-        ["GIT_LFS_SKIP_SMUDGE=1 git clone {repo_url} repo-dir".format(repo_url=repo_url)],  # 例: 1つ前のコミットとの差分
+        ["GIT_LFS_SKIP_SMUDGE=1 git clone {repo_url} repo-dir".format(repo_url=repo_url)],
         shell=True,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         text=True
     )
+    print(result.stdout)
+    print(result.stderr)
+
+    # コミット一覧取得
+    result = subprocess.run(
+        ["git", "-C", "repo-dir", "log", "--pretty=format:%H|%s"],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True
+    )
+    print(result.stdout)
+    print(result.stderr)
 
     commits = []
     for line in result.stdout.splitlines():
