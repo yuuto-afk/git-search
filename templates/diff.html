@@ -12,6 +12,59 @@
   <style>
     body { font-family: sans-serif; margin: 20px; }
 
+    /* Google風検索ボックス */
+    .search-container {
+      display: flex;
+      align-items: center;
+      width: 480px;
+      background: #fff;
+      border-radius: 24px;
+      padding: 8px 16px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      transition: box-shadow 0.2s ease;
+    }
+
+    .search-container:hover {
+      box-shadow: 0 4px 12px rgba(0,0,0,0.20);
+    }
+
+    .search-container:focus-within {
+      box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+    }
+
+    .search-icon {
+      font-size: 20px;
+      margin-right: 10px;
+      color: #666;
+    }
+
+    #repoUrl {
+      flex: 1;
+      border: none;
+      outline: none;
+      font-size: 16px;
+      padding: 6px;
+    }
+
+    #loadBtn {
+      background: #4285f4;
+      color: white;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-left: 10px;
+    }
+
+    #loadBtn:hover {
+      background: #357ae8;
+    }
+
+    #urlBox {
+      margin-bottom: 20px;
+    }
+
     /* モード選択 */
     #modeSelect { margin-top: 20px; display: none; }
     #modeSelect select { padding: 6px 10px; font-size: 16px; }
@@ -54,11 +107,13 @@
 
 <h2>GitHub Viewer</h2>
 
-<!-- GitHub URL 入力欄 -->
-<div id="controls">
-  <label for="repoUrl">GitHub URL:</label>
-  <input id="repoUrl" type="text" placeholder="https://github.com/user/repo">
-  <button id="loadBtn">clone</button>
+<!-- GitHub URL 入力欄（Google検索風） -->
+<div id="urlBox">
+  <div class="search-container">
+    <span class="search-icon">🔍</span>
+    <input id="repoUrl" type="text" placeholder="GitHub URL を入力してください…">
+    <button id="loadBtn">clone</button>
+  </div>
 </div>
 
 <!-- ロード中 UI -->
