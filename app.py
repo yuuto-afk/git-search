@@ -88,7 +88,7 @@ def search():
 
     # grep -R で全文検索
     result = subprocess.run(
-        ["grep", "-R", "-n", keyword, "repo-dir"],
+        ["grep", "-R", "-n", "--exclude-dir=.git", keyword, "repo-dir"],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         text=True
