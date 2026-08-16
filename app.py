@@ -93,6 +93,8 @@ def search():
         stderr=subprocess.PIPE,
         text=True
     )
+    print(result.stdout)
+    print(result.stderr)
 
     lines = result.stdout.splitlines()
 
