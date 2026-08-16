@@ -40,8 +40,8 @@ def clone_repo():
 
     commits = []
     for line in result.stdout.splitlines():
-        hash, msg = line.split("|", 1)
-        commits.append({"hash": hash, "message": msg})
+        hash, msg, date = line.split("|", 2)
+        commits.append({"hash": hash, "message": msg, "date": date})
 
     return jsonify({"commits": commits})
 
