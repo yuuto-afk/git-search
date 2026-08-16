@@ -116,11 +116,22 @@ function renderSearchPage() {
 
   pageItems.forEach(r => {
     const item = document.createElement("div");
-    item.style.marginBottom = "10px";
+    item.style.marginBottom = "20px";
+
+    const contextHtml = r.context
+      .map((line, i) => {
+        const lineNumber = r.context_start + i;
+        return `<span style="color:#888;">${lineNumber}</span>  ${line}`;
+      })
+      .join("\n");
+
     item.innerHTML = `
       <div><strong>${r.path}</strong> : ${r.line}</div>
-      <div style="color:#555;">${r.content}</div>
+      <pre style="background:#f6f8fa; padding:10px; border-radius:6px;">
+${contextHtml}
+      </pre>
     `;
+
     resultsDiv.appendChild(item);
   });
 

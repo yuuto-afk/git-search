@@ -2,6 +2,7 @@ import os
 import shutil
 import subprocess
 from flask import Flask, render_template, request, jsonify
+import html
 
 app = Flask(__name__)
 
@@ -100,15 +101,34 @@ def search():
 
     results = []
     for line in lines:
-        # 例: git-search/path/to/file.py:23: print("hello")
         try:
             path, line_no, content = line.split(":", 2)
+            line_no = int(line_no)
+
+            # ファイルを読み込んで前後3行を取得
+            full_path = os.path.join("repo-dir", path.replace("repo-dir" + "/", ""))
+
+            with open(full_path, "r", encoding="utf-8", errors="ignore") as f:
+                file_lines = f.readlines()
+
+            start = max(0, line_no - 4)
+            end = min(len(file_lines), line_no + 3)
+
+            context = file_lines[start:end]
+
+            # HTMLを無害化
+            safe_context = [html.escape(l.rstrip("\n")) for l in context]
+            safe_content = html.escape(content)
+
             results.append({
                 "path": path.replace("repo-dir" + "/", ""),
                 "line": line_no,
-                "content": content
+                "match": safe_content,
+                "context": safe_context,
+                "context_start": start + 1
             })
-        except:
+
+        except Exception as e:
             continue
 
     return jsonify({"results": results})
