@@ -107,7 +107,7 @@ def search():
             path, line_no, content = line.split(":", 2)
             line_no = int(line_no)
 
-            rel_path = path.relpath(path, "repo-dir")
+            rel_path = os.path.relpath(path, "repo-dir")
 
             if rel_path not in file_hits:
                 file_hits[rel_path] = []
@@ -117,7 +117,7 @@ def search():
                 "content": content,
                 "abs_path": path
             })
-        except:
+        except Exception as e:
             print("PARSE ERROR:", e)
             continue
 
