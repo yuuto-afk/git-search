@@ -118,6 +118,7 @@ def search():
                 "abs_path": path
             })
         except:
+            print("PARSE ERROR:", e)
             continue
 
     results = []
@@ -188,4 +189,5 @@ def search():
             "hunks": safe_hunks
         })
 
+    print(results)
     return jsonify({"results": results})
