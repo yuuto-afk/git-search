@@ -39,19 +39,7 @@ document.getElementById("loadBtn").addEventListener("click", async () => {
   document.getElementById("branchSelect").style.display = "block";
 });
 
-// モード切り替え
-document.getElementById("mode").addEventListener("change", () => {
-  const mode = document.getElementById("mode").value;
-
-  document.getElementById("diffMode").style.display = "none";
-
-  if (mode === "diff") {
-    document.getElementById("diffMode").style.display = "block";
-    document.getElementById("commitSelect").style.display = "block";
-  }
-});
-
-// ▼ ブランチ選択 → コミット一覧取得
+// ▼ ブランチ選択 → コミット一覧取得 → モード選択を表示
 document.getElementById("branchList").addEventListener("change", async () => {
   const branch = document.getElementById("branchList").value;
 
@@ -63,6 +51,7 @@ document.getElementById("branchList").addEventListener("change", async () => {
 
   const data = await res.json();
 
+  // ▼ コミット一覧をセット
   const commitA = document.getElementById("commitA");
   const commitB = document.getElementById("commitB");
   commitA.innerHTML = "";
@@ -80,7 +69,20 @@ document.getElementById("branchList").addEventListener("change", async () => {
     commitB.appendChild(optB);
   });
 
+  // ▼ ブランチ選択後にモード選択を表示（ここが重要）
   document.getElementById("modeSelect").style.display = "block";
+});
+
+// ▼ モード選択 → 差分モードを表示
+document.getElementById("mode").addEventListener("change", () => {
+  const mode = document.getElementById("mode").value;
+
+  document.getElementById("diffMode").style.display = "none";
+
+  if (mode === "diff") {
+    document.getElementById("diffMode").style.display = "block";
+    document.getElementById("commitSelect").style.display = "block";
+  }
 });
 
 // ▼ 差分表示
@@ -97,4 +99,3 @@ document.getElementById("diffBtn").addEventListener("click", async () => {
   const data = await res.json();
   renderDiff(data.diff);
 });
-

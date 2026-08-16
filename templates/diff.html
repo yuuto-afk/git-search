@@ -38,19 +38,19 @@
   <select id="branchList"></select>
 </div>
 
+<!-- モード選択（ブランチ選択後に表示） -->
+<div id="modeSelect" style="display:none; margin-top:20px;">
+  <h3>モード選択</h3>
+  <select id="mode">
+    <option value="">選択してください</option>
+    <option value="diff">コミットの差分を見るモード</option>
+    <option value="search">ソースコード検索モード</option>
+  </select>
+</div>
+
 <!-- 差分モード -->
 <div id="diffMode">
   <h3>コミットの差分を見るモード</h3>
-
-  <!-- モード選択（ブランチ選択後に表示） -->
-  <div id="modeSelect" style="display:none; margin-top:20px;">
-    <h3>モード選択</h3>
-    <select id="mode">
-      <option value="">選択してください</option>
-      <option value="diff">コミットの差分を見るモード</option>
-      <option value="search">ソースコード検索モード</option>
-    </select>
-  </div>
 
   <!-- ▼ コミット選択欄（ブランチ選択後に表示） -->
   <div id="commitSelect" style="display:none; margin-top:20px;">
