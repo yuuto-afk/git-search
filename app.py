@@ -99,36 +99,91 @@ def search():
 
     lines = result.stdout.splitlines()
 
-    results = []
+    # ファイルごとにまとめる
+    file_hits = {}
+
     for line in lines:
         try:
             path, line_no, content = line.split(":", 2)
             line_no = int(line_no)
 
-            # ファイルを読み込んで前後3行を取得
-            full_path = os.path.join("repo-dir", path.replace("repo-dir" + "/", ""))
+            rel_path = path.replace("repo-dir" + "/", "")
 
+            if rel_path not in file_hits:
+                file_hits[rel_path] = []
+
+            file_hits[rel_path].append({
+                "line": line_no,
+                "content": content
+            })
+        except:
+            continue
+
+    results = []
+
+    # ▼ ファイルごとに「まとまり（hunk）」を作る
+    for rel_path, hits in file_hits.items():
+        full_path = os.path.join("repo-dir", rel_path)
+        try:
             with open(full_path, "r", encoding="utf-8", errors="ignore") as f:
                 file_lines = f.readlines()
+        except:
+            continue
 
+        hunk = []
+        current_hunk = None
+
+        for hit in hits:
+            line_no = hit["line"]
+
+            # 前後3行
             start = max(0, line_no - 4)
             end = min(len(file_lines), line_no + 3)
 
-            context = file_lines[start:end]
+            if current_hunk is None:
+                current_hunk = {
+                    "start": start,
+                    "end": end,
+                    "hits": [hit]
+                }
+            else:
+                # ▼ 前後3行が重なるなら同じまとまりに統合
+                if start <= current_hunk["end"]:
+                    current_hunk["end"] = max(current_hunk["end"], end)
+                    current_hunk["hits"].append(hit)
+                else:
+                    # ▼ 離れているので新しいまとまりを作る
+                    hunks.append(current_hunk)
+                    current_hunk = {
+                        "start": start,
+                        "end": end,
+                        "hits": [hit]
+                    }
 
-            # HTMLを無害化
+        if current_hunk:
+            hunks.append(current_hunk)
+
+        # ▼ HTMLエスケープして返す
+        safe_hunks = []
+        for h in hunks:
+            context = file_lines[h["start"]:h["end"]]
             safe_context = [html.escape(l.rstrip("\n")) for l in context]
-            safe_content = html.escape(content)
 
-            results.append({
-                "path": path.replace("repo-dir" + "/", ""),
-                "line": line_no,
-                "match": safe_content,
+            safe_hunks.append({
+                "start": h["start"] + 1,
                 "context": safe_context,
-                "context_start": start + 1
+                "hits": [
+                    {
+                        "line": hit["line"],
+                        "content": html.escape(hit["content"])
+                    }
+                    for hit in h["hits"]
+                ]
             })
 
-        except Exception as e:
-            continue
+        results.append({
+            "path": rel_path,
+            "hunks": safe_hunks
+        })
 
     return jsonify({"results": results})

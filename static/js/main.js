@@ -121,34 +121,45 @@ function renderSearchPage() {
 
   const pageItems = searchResults.slice(start, end);
 
-  pageItems.forEach(r => {
-    const item = document.createElement("div");
-    item.style.marginBottom = "20px";
+  pageItems.forEach(file => {
+    const fileBox = document.createElement("div");
+    fileBox.style.marginBottom = "30px";
 
-    const contextHtml = r.context
-      .map((line, i) => {
-        const lineNumber = r.context_start + i;
-        const highlighted = highlight(line, currentKeyword);
-        return `<span style="color:#888;">${lineNumber}</span>  ${highlighted}`;
-      })
-      .join("\n");
+    fileBox.innerHTML = `<h4>${file.path}</h4>`;
 
-    item.innerHTML = `
-      <div><strong>${r.path}</strong> : ${r.line}</div>
-      <pre style="background:#f6f8fa; padding:10px; border-radius:6px; white-space:pre-wrap;">
-${contextHtml}
-      </pre>
-    `;
+    file.hunks.forEach((hunk, index) => {
+      const contextHtml = hunk.context
+        .map((line, i) => {
+          const lineNumber = hunk.start + i;
+          const highlighted = highlight(line, currentKeyword);
+          return `<span style="color:#888;">${lineNumber}</span>  ${highlighted}`;
+        })
+        .join("\n");
 
-    resultsDiv.appendChild(item);
+      const hunkBox = document.createElement("div");
+      hunkBox.innerHTML = `
+        <pre class="code-block">${contextHtml}</pre>
+      `;
+
+      fileBox.appendChild(hunkBox);
+
+      // ▼ 次のまとまりがあるなら “…” を挟む
+      if (index < file.hunks.length - 1) {
+        const sep = document.createElement("div");
+        sep.textContent = "...";
+        sep.style.color = "#999";
+        sep.style.margin = "10px 0";
+        fileBox.appendChild(sep);
+      }
+    });
+
+    resultsDiv.appendChild(fileBox);
   });
 
-  // ページ情報更新
   const totalPages = Math.ceil(searchResults.length / perPage);
   document.getElementById("pageInfo").textContent =
     `${currentPage} / ${totalPages}`;
 
-  // ページネーション表示
   document.getElementById("pagination").style.display =
     searchResults.length > perPage ? "block" : "none";
 }
