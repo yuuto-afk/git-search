@@ -19,7 +19,7 @@ def diff():
         shutil.rmtree("repo-dir")
 
     result = subprocess.run(
-        ["git clone {repo_url} repo-dir && cd repo-dir && git diff HEAD~1 HEAD".format(repo_url=repo_url)],  # 例: 1つ前のコミットとの差分
+        ["GIT_LFS_SKIP_SMUDGE=1 git clone {repo_url} repo-dir && cd repo-dir && git diff HEAD~1 HEAD".format(repo_url=repo_url)],  # 例: 1つ前のコミットとの差分
         shell=True,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
