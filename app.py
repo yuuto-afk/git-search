@@ -127,7 +127,7 @@ def search():
     for rel_path, hits in file_hits.items():
         abs_path = hits[0]["abs_path"]
         try:
-            with open(full_path, "r", encoding="utf-8", errors="ignore") as f:
+            with open(abs_path, "r", encoding="utf-8", errors="ignore") as f:
                 file_lines = f.readlines()
         except Exception as e:
             print("FILE OPEN ERROR:", abs_path, e)
