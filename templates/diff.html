@@ -2,6 +2,8 @@
 <html>
 <head>
   <meta charset="utf-8">
+  <title>GitHub Viewer</title>
+
   <link rel="stylesheet"
         href="https://cdn.jsdelivr.net/npm/diff2html/bundles/css/diff2html.min.css" />
   <script src="https://cdn.jsdelivr.net/npm/diff@5.0.0/dist/diff.min.js"></script>
@@ -9,10 +11,12 @@
 
   <style>
     body { font-family: sans-serif; margin: 20px; }
-    #controls { margin-bottom: 16px; }
-    #repoUrl { width: 360px; padding: 4px 8px; }
-    #loadBtn { padding: 4px 10px; }
 
+    /* モード選択 */
+    #modeSelect { margin-top: 20px; display: none; }
+    #modeSelect select { padding: 6px 10px; font-size: 16px; }
+
+    /* ロード中 UI */
     #loading {
       display: none;
       margin-top: 20px;
@@ -35,43 +39,26 @@
       100% { transform: rotate(360deg); }
     }
 
+    /* 差分モード */
+    #diffMode { display: none; }
     #commitSelect { margin-top: 20px; display: none; }
+    select { padding: 6px; width: 360px; margin-bottom: 12px; }
 
-    .commit-option {
-      padding: 6px 8px;
-      font-size: 14px;
-      line-height: 1.4;
-    }
-
-    .commit-hash {
-      font-weight: bold;
-      color: #2c3e50;
-    }
-
-    .commit-msg {
-      color: #555;
-    }
-
-    .commit-date {
-      color: #888;
-      font-size: 12px;
-    }
-
-    select {
-      padding: 6px;
-      width: 360px;
-      margin-bottom: 12px;
-    }
+    .commit-option { padding: 6px 8px; font-size: 14px; line-height: 1.4; }
+    .commit-hash { font-weight: bold; color: #2c3e50; }
+    .commit-msg { color: #555; }
+    .commit-date { color: #888; font-size: 12px; }
   </style>
 </head>
 <body>
 
-<h2>Git リポジトリの差分</h2>
+<h2>GitHub Viewer</h2>
 
+<!-- GitHub URL 入力欄 -->
 <div id="controls">
   <label for="repoUrl">GitHub URL:</label>
   <input id="repoUrl" type="text" placeholder="https://github.com/user/repo">
-  <button id="loadBtn">差分を表示</button>
+  <button id="loadBtn">clone</button>
 </div>
 
 <!-- ロード中 UI -->
@@ -80,20 +67,34 @@
   リポジトリを clone しています…
 </div>
 
-<!-- コミット選択 UI -->
-<div id="commitSelect">
-  <h3>コミットを選択してください</h3>
-
-  <label>変更前コミット:</label><br>
-  <select id="commitA"></select><br><br>
-
-  <label>変更後コミット:</label><br>
-  <select id="commitB"></select><br><br>
-
-  <button id="diffBtn">差分を表示</button>
+<!-- clone 後に表示されるモード選択 -->
+<div id="modeSelect">
+  <h3>モード選択</h3>
+  <select id="mode">
+    <option value="">選択してください</option>
+    <option value="diff">コミットの差分を見るモード</option>
+    <option value="search">ソースコード検索モード</option>
+  </select>
 </div>
 
-<div id="diff"></div>
+<!-- 差分モード -->
+<div id="diffMode">
+  <h3>コミットの差分を見るモード</h3>
+
+  <div id="commitSelect">
+    <h3>コミットを選択してください</h3>
+
+    <label>コミット A:</label><br>
+    <select id="commitA"></select><br>
+
+    <label>コミット B:</label><br>
+    <select id="commitB"></select><br>
+
+    <button id="diffBtn">差分を表示</button>
+  </div>
+
+  <div id="diff"></div>
+</div>
 
 <script>
   const renderDiff = (text) => {
@@ -112,6 +113,7 @@
     document.getElementById("loading").style.display = "block";
     document.getElementById("diff").innerHTML = "";
     document.getElementById("commitSelect").style.display = "none";
+    document.getElementById("modeSelect").style.display = "none";
 
     const res = await fetch("/clone", {
       method: "POST",
@@ -122,7 +124,10 @@
     const data = await res.json();
     document.getElementById("loading").style.display = "none";
 
-    // コミット一覧を select に追加
+    // clone 完了後にモード選択を表示
+    document.getElementById("modeSelect").style.display = "block";
+
+    // コミット一覧を select に追加（差分モード用）
     const commitA = document.getElementById("commitA");
     const commitB = document.getElementById("commitB");
     commitA.innerHTML = "";
@@ -151,8 +156,18 @@
       `;
       commitB.appendChild(optB);
     });
+  });
 
-    document.getElementById("commitSelect").style.display = "block";
+  // モード切り替え
+  document.getElementById("mode").addEventListener("change", () => {
+    const mode = document.getElementById("mode").value;
+
+    document.getElementById("diffMode").style.display = "none";
+
+    if (mode === "diff") {
+      document.getElementById("diffMode").style.display = "block";
+      document.getElementById("commitSelect").style.display = "block";
+    }
   });
 
   // 差分表示
@@ -173,3 +188,4 @@
 
 </body>
 </html>
+
