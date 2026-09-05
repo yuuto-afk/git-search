@@ -132,16 +132,7 @@ function renderSearchPage() {
         .map((line, i) => {
           const lineNumber = hunk.start + i;
           const highlighted = highlight(line, currentKeyword);
-
-          // ▼ 行番号クリックで GitHub にジャンプ
-          return `
-            <span class="linejump"
-                  data-path="${file.path}"
-                  data-line="${lineNumber}">
-              ${lineNumber}
-            </span>
-            ${highlighted}
-          `;
+          return `<span style="color:#888;">${lineNumber}</span>  ${highlighted}`;
         })
         .join("\n");
 
@@ -163,32 +154,6 @@ function renderSearchPage() {
     });
 
     resultsDiv.appendChild(fileBox);
-  });
-
-  // ▼ 行番号クリックイベント
-  document.querySelectorAll(".linejump").forEach(el => {
-    el.style.color = "#4a8af4";
-    el.style.cursor = "pointer";
-
-    el.addEventListener("click", () => {
-      const path = el.dataset.path;
-      const line = el.dataset.line;
-
-      // ▼ GitHub URL を組み立てる
-      const repoUrl = document.getElementById("repoUrl").value;
-      const branch = document.getElementById("branchList").value;
-
-      // 例: https://github.com/user/repo → user/repo を抽出
-      const m = repoUrl.match(/github\.com\/([^\/]+\/[^\/]+)/);
-      if (!m) return;
-
-      const repo = m[1];
-
-      const githubUrl =
-        `https://github.com/${repo}/blob/${branch}/${path}#L${line}`;
-
-      window.open(githubUrl, "_blank");
-    });
   });
 
   const totalPages = Math.ceil(searchResults.length / perPage);
