@@ -132,7 +132,7 @@ function renderSearchPage() {
         .map((line, i) => {
           const lineNumber = hunk.start + i;
           const highlighted = highlight(line, currentKeyword);
-          return `<span style="color:#888;">${lineNumber}</span>  ${highlighted}`;
+          return `<span style="color:#888;" class="linejump" data-path="{file.path}" data-line="${lineNumber}">${lineNumber}</span>  ${highlighted}`;
         })
         .join("\n");
 
@@ -154,6 +154,29 @@ function renderSearchPage() {
     });
 
     resultsDiv.appendChild(fileBox);
+  });
+
+  // ▼ 行番号クリックイベント
+  document.querySelectorAll(".linejump").forEach(el => {
+    el.addEventListener("click", () => {
+      const path = el.dataset.path;
+      const line = el.dataset.line;
+
+      const repoUrl = document.getElementById("repoUrl").value;
+      const branch = document.getElementById("branchList").value;
+
+      // ▼ GitHub の repo 部分を抽出
+      const m = repoUrl.match(/github\.com\/([^\/]+\/[^\/]+)/);
+      if (!m) return;
+
+      const repo = m[1];
+
+      // ▼ GitHub の行番号ジャンプ URL を組み立てる
+      const githubUrl =
+        `https://github.com/${repo}/blob/${branch}/${path}#L${line}`;
+
+      window.open(githubUrl, "_blank");
+    });
   });
 
   const totalPages = Math.ceil(searchResults.length / perPage);
