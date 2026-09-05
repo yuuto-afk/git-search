@@ -10,6 +10,10 @@ app = Flask(__name__)
 def index():
     return render_template("diff.html")
 
+@app.route("/health")
+def health():
+    return "OK", 200
+
 @app.route("/clone", methods=["POST"])
 def clone_repo():
     data = request.get_json()
