@@ -159,3 +159,7 @@ select {
 #searchResults {
   font-size: 15px;
 }
+
+.linejump:hover {
+  text-decoration: underline;
+}

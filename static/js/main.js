@@ -135,8 +135,7 @@ function renderSearchPage() {
 
           // ▼ 行番号クリックで GitHub にジャンプ
           return `
-            <span style="color:#888;"
-                  class="linejump"
+            <span class="linejump"
                   data-path="${file.path}"
                   data-line="${lineNumber}">
               ${lineNumber}
@@ -168,6 +167,9 @@ function renderSearchPage() {
 
   // ▼ 行番号クリックイベント
   document.querySelectorAll(".linejump").forEach(el => {
+    el.style.color = "#4a8af4";
+    el.style.cursor = "pointer";
+
     el.addEventListener("click", () => {
       const path = el.dataset.path;
       const line = el.dataset.line;
