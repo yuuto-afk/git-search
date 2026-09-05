@@ -132,7 +132,7 @@ function renderSearchPage() {
         .map((line, i) => {
           const lineNumber = hunk.start + i;
           const highlighted = highlight(line, currentKeyword);
-          return `<span style="color:#888;" class="linejump" data-path="{file.path}" data-line="${lineNumber}">${lineNumber}</span>  ${highlighted}`;
+          return `<span style="color:#888;" class="linejump" data-path="${file.path}" data-line="${lineNumber}">${lineNumber}</span>  ${highlighted}`;
         })
         .join("\n");
 
@@ -166,7 +166,7 @@ function renderSearchPage() {
       const branch = document.getElementById("branchList").value;
 
       // ▼ GitHub の repo 部分を抽出
-      const m = repoUrl.match(/github\.com\/([^\/]+\/[^\/]+)/);
+      const m = repoUrl.match(/github\.com\/([^\/]+\/[^\/]+)(\.git)?/);
       if (!m) return;
 
       const repo = m[1];
