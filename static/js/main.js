@@ -166,7 +166,7 @@ function renderSearchPage() {
       const branch = document.getElementById("branchList").value;
 
       // ▼ GitHub の repo 部分を抽出
-      const m = repoUrl.match(/github\.com\/([^\/]+\/[^\/]+)(\.git)?/);
+      const m = repoUrl.match(/github\.com\/([^\/]+\/[^\/]+?)(?:\.git)?$/);
       if (!m) return;
 
       const repo = m[1];
